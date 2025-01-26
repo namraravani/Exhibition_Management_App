@@ -1,0 +1,42 @@
+# Ignore all macOS generated files
+.DS_Store
+
+# General IDE files
+.idea/
+.vscode/
+*.log
+
+# Ignore Git-specific files
+.git/
+
+# Ignore Flutter-related files for the frontend
+Exhibition_Management_Frontend/exhibition_management_frontend/.dart_tool/
+Exhibition_Management_Frontend/exhibition_management_frontend/.flutter-plugins
+Exhibition_Management_Frontend/exhibition_management_frontend/.flutter-plugins-dependencies
+Exhibition_Management_Frontend/exhibition_management_frontend/.packages
+Exhibition_Management_Frontend/exhibition_management_frontend/.ios/
+Exhibition_Management_Frontend/exhibition_management_frontend/.android/
+Exhibition_Management_Frontend/exhibition_management_frontend/build/
+Exhibition_Management_Frontend/exhibition_management_frontend/.gradle/
+Exhibition_Management_Frontend/exhibition_management_frontend/pubspec.lock
+Exhibition_Management_Frontend/exhibition_management_frontend/.metadata
+
+# Ignore .NET-related files for the backend
+Exhibition_Management_Backend/exhibition_management_backend/bin/
+Exhibition_Management_Backend/exhibition_management_backend/obj/
+Exhibition_Management_Backend/exhibition_management_backend/.vs/
+Exhibition_Management_Backend/exhibition_management_backend/*.user
+Exhibition_Management_Backend/exhibition_management_backend/*.suo
+Exhibition_Management_Backend/exhibition_management_backend/*.dbmdl
+Exhibition_Management_Backend/exhibition_management_backend/*.log
+Exhibition_Management_Backend/exhibition_management_backend/*.pdb
+Exhibition_Management_Backend/exhibition_management_backend/.nuget/
+Exhibition_Management_Backend/exhibition_management_backend/*.cache
+
+# Ignore system-specific files
+Thumbs.db
+desktop.ini
+
+# Ignore specific configuration files (optional)
+*.config
+*.env
