@@ -5,6 +5,9 @@ using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using exhibition_management_backend.Helpers;
+using System.Data;
 
 namespace exhibition_management_backend.Repositories.Exhibition
 {
@@ -70,6 +73,47 @@ namespace exhibition_management_backend.Repositories.Exhibition
             return exhibition;
         }
 
+        public async Task<int> CreateExhibitionAsync(ExhibitionAddressDTO exhibitionAddressDTO)
+        {
+            const string commandText = "CALL sp_insertexhibition(@Venuename, @AddressLine1, @AddressLine2, @AddressLine3, @GoogleMapsLink, " +
+                                       "@StartDate, @EndDate, @StartTime, @EndTime, @NoOfTables, @Description, @VenueImages, @BannerImage, @LayoutImage);";
+
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                var parameters = new DynamicParameters();
+                parameters.Add("Venuename", exhibitionAddressDTO.Venuename, DbType.String);
+                parameters.Add("AddressLine1", exhibitionAddressDTO.AddressLine1, DbType.String);
+                parameters.Add("AddressLine2", exhibitionAddressDTO.AddressLine2, DbType.String);
+                parameters.Add("AddressLine3", exhibitionAddressDTO.AddressLine3, DbType.String);
+                parameters.Add("GoogleMapsLink", exhibitionAddressDTO.GoogleMapsLink, DbType.String);
+                parameters.Add("StartDate", Converter.ConvertStringToDateOnlyLegacy(exhibitionAddressDTO.Startdate), DbType.Date);
+                parameters.Add("EndDate", Converter.ConvertStringToDateOnlyLegacy(exhibitionAddressDTO.Enddate), DbType.Date);
+                parameters.Add("StartTime", exhibitionAddressDTO.Starttime, DbType.Time);
+                parameters.Add("EndTime", exhibitionAddressDTO.Endtime, DbType.Time);
+                parameters.Add("NoOfTables", exhibitionAddressDTO.Nooftables ?? 0, DbType.Int32);
+                parameters.Add("Description", exhibitionAddressDTO.Description ?? string.Empty, DbType.String);
+                parameters.Add("VenueImages", exhibitionAddressDTO.Venueimages ?? Array.Empty<string>(), DbType.Object);
+                parameters.Add("BannerImage", exhibitionAddressDTO.Bannerimage ?? string.Empty, DbType.String);
+                parameters.Add("LayoutImage", exhibitionAddressDTO.Layoutimage ?? string.Empty, DbType.String);
+
+                try
+                {
+                    return await connection.ExecuteAsync(commandText, parameters);
+                }
+                catch (PostgresException pgEx)
+                {
+                    Console.WriteLine($"Postgres Error: {pgEx.Message}\nDetail: {pgEx.Detail}");
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                    throw;
+                }
+            }
+        }
 
     }
 }

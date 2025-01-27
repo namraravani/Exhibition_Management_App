@@ -31,5 +31,26 @@ namespace exhibition_management_backend.Controllers
             var exhibition = await _service.GetExhibitionById(id);
             return Ok(exhibition);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateExhibition([FromBody] ExhibitionAddressDTO exhibitionAddressDTO)
+        {
+            if (exhibitionAddressDTO == null)
+            {
+                return BadRequest("Invalid input.");
+            }
+
+            try
+            {
+                var result = await _service.CreateExhibitionAsync(exhibitionAddressDTO);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (if logging is set up)
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 }

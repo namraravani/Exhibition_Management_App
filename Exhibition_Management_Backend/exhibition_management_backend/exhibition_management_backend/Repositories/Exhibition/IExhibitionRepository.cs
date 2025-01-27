@@ -1,5 +1,6 @@
 ﻿using exhibition_management_backend.DTO;
 using exhibition_management_backend.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace exhibition_management_backend.Repositories.Exhibition
 {
@@ -8,5 +9,6 @@ namespace exhibition_management_backend.Repositories.Exhibition
         Task<IEnumerable<ExhibitionDTO>> GetAllExhibitions();
 
         Task<IEnumerable<ExhibitionAddressDTO>> GetExhibitionById(int id);
+        Task<int> CreateExhibitionAsync(ExhibitionAddressDTO exhibitionAddressDTO);
     }
 }
