@@ -1,5 +1,8 @@
 ﻿using exhibition_management_backend.DTO;
+using exhibition_management_backend.Helpers;
+using exhibition_management_backend.Models;
 using exhibition_management_backend.Repositories.Exhibition;
+using Microsoft.AspNetCore.Mvc;
 
 namespace exhibition_management_backend.Services.Exhibition
 {
@@ -20,11 +23,22 @@ namespace exhibition_management_backend.Services.Exhibition
 
         public async Task<IEnumerable<ExhibitionDTO>> GetAllExhibitions()
         {
-            // Convert to a list to ensure proper serialization
+           
             var exhibitions = await _repository.GetAllExhibitions();
             return exhibitions.ToList();
         }
 
-        
+        public async Task<object> CreateExhibitionAsync(ExhibitionAddressDTO exhibitionAddressDTO)
+        {
+            if (string.IsNullOrWhiteSpace(exhibitionAddressDTO.Venuename) ||
+                string.IsNullOrWhiteSpace(exhibitionAddressDTO.AddressLine1))
+            {
+                throw new ArgumentException("Venue name and Address Line 1 are required.");
+            }
+
+            var result = await _repository.CreateExhibitionAsync(exhibitionAddressDTO);
+            return new { Success = true, Message = "Exhibition created successfully.", Data = result };
+        }
+
     }
 }

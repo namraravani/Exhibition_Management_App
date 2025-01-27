@@ -11,6 +11,22 @@
   },
   {
     "ContainingType": "exhibition_management_backend.Controllers.ExhibitionController",
+    "Method": "CreateExhibition",
+    "RelativePath": "api/Exhibition",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "exhibitionAddressDTO",
+        "Type": "exhibition_management_backend.DTO.ExhibitionAddressDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "exhibition_management_backend.Controllers.ExhibitionController",
     "Method": "GetExhibitionById",
     "RelativePath": "api/Exhibition/{id}",
     "HttpMethod": "GET",
