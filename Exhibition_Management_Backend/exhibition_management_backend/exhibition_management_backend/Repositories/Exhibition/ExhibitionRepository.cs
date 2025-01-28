@@ -115,5 +115,35 @@ namespace exhibition_management_backend.Repositories.Exhibition
             }
         }
 
+
+        public async Task<int> DeleteExhibition(int id)
+        {
+            const string commandText = "DELETE FROM Exhibition WHERE Id = @Id;";
+
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                var parameters = new DynamicParameters();
+                parameters.Add("Id", id, DbType.Int32);
+
+                try
+                {
+                    return await connection.ExecuteAsync(commandText, parameters);
+                }
+                catch (PostgresException pgEx)
+                {
+                    Console.WriteLine($"Postgres Error: {pgEx.Message}\nDetail: {pgEx.Detail}");
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Repository Error: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                    throw;
+                }
+            }
+        }
+
+
     }
 }

@@ -10,5 +10,7 @@ namespace exhibition_management_backend.Repositories.Exhibition
 
         Task<IEnumerable<ExhibitionAddressDTO>> GetExhibitionById(int id);
         Task<int> CreateExhibitionAsync(ExhibitionAddressDTO exhibitionAddressDTO);
+
+        Task<int> DeleteExhibition(int id);
     }
 }

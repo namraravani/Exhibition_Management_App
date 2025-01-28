@@ -40,5 +40,21 @@ namespace exhibition_management_backend.Services.Exhibition
             return new { Success = true, Message = "Exhibition created successfully.", Data = result };
         }
 
+
+        public async Task<bool> DeleteExhibition(int id)
+        {
+            try
+            {
+                var rowsAffected = await _repository.DeleteExhibition(id);
+                return rowsAffected > 0; // Return true if rows were deleted, false otherwise
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Service Error: {ex.Message}");
+                throw; // Propagate the exception to the controller
+            }
+        }
+
+
     }
 }

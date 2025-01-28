@@ -47,10 +47,31 @@ namespace exhibition_management_backend.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (if logging is set up)
+
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteExhibition(int id)
+        {
+            try
+            {
+                var result = await _service.DeleteExhibition(id);
+
+                if (result)
+                    return NoContent();
+
+                return NotFound($"Exhibition with Id {id} not found.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(500, "An error occurred while deleting the exhibition.");
+            }
+        }
+
 
     }
 }
