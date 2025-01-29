@@ -10,5 +10,7 @@ namespace exhibition_management_backend.Services.Exhibition
         Task<object> CreateExhibitionAsync(ExhibitionAddressDTO exhibitionAddressDTO);
 
         Task<bool> DeleteExhibition(int id);
+
+        Task<int> UpdateExhibitionAsync(int id, ExhibitionAddressDTO exhibitionAddressDTO);
     }
 }

@@ -52,6 +52,32 @@ namespace exhibition_management_backend.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateExhibition(int id, [FromBody] ExhibitionAddressDTO exhibitionAddressDTO)
+        {
+            if (exhibitionAddressDTO == null)
+            {
+                return BadRequest("Invalid input.");
+            }
+
+            try
+            {
+                var result = await _service.UpdateExhibitionAsync(id, exhibitionAddressDTO);
+
+                if (result == 0)
+                {
+                    return NotFound($"Exhibition with ID {id} not found.");
+                }
+
+                return Ok("Exhibition updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExhibition(int id)

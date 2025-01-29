@@ -40,6 +40,17 @@ namespace exhibition_management_backend.Services.Exhibition
             return new { Success = true, Message = "Exhibition created successfully.", Data = result };
         }
 
+        public async Task<int> UpdateExhibitionAsync(int id, ExhibitionAddressDTO exhibitionAddressDTO)
+        {
+            if (exhibitionAddressDTO == null)
+            {
+                throw new ArgumentNullException(nameof(exhibitionAddressDTO), "Exhibition data cannot be null.");
+            }
+
+            return await _repository.UpdateExhibition(id, exhibitionAddressDTO);
+        }
+
+
 
         public async Task<bool> DeleteExhibition(int id)
         {

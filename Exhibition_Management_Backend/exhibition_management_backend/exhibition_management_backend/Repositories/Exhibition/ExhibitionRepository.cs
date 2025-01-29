@@ -116,6 +116,117 @@ namespace exhibition_management_backend.Repositories.Exhibition
         }
 
 
+        public async Task<int> UpdateExhibition(int id, ExhibitionAddressDTO exhibitionAddressDTO)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                using (var transaction = await connection.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        // Check if the exhibition exists
+                        const string checkExhibitionQuery = "SELECT addressid FROM exhibition WHERE id = @id";
+                        int? existingAddressId = await connection.ExecuteScalarAsync<int?>(checkExhibitionQuery, new { id });
+
+                        if (existingAddressId == null)
+                        {
+                            return 0; // Exhibition not found
+                        }
+
+                        // Check if the address exists
+                        const string checkAddressQuery = "SELECT id FROM address WHERE id = @id";
+                        int? addressId = await connection.ExecuteScalarAsync<int?>(checkAddressQuery, new { id = existingAddressId });
+
+                        if (addressId.HasValue)
+                        {
+                            // Update existing address
+                            const string updateAddressQuery = @"
+                        UPDATE address 
+                        SET addressline1 = @AddressLine1, 
+                            addressline2 = @AddressLine2, 
+                            addressline3 = @AddressLine3, 
+                            googlemapslink = @GoogleMapsLink 
+                        WHERE id = @Id";
+
+                            await connection.ExecuteAsync(updateAddressQuery, new
+                            {
+                                Id = addressId.Value,
+                                exhibitionAddressDTO.AddressLine1,
+                                exhibitionAddressDTO.AddressLine2,
+                                exhibitionAddressDTO.AddressLine3,
+                                exhibitionAddressDTO.GoogleMapsLink
+                            });
+                        }
+                        else
+                        {
+                            // Insert new address if it doesn't exist
+                            const string insertAddressQuery = @"
+                        INSERT INTO address (addressline1, addressline2, addressline3, googlemapslink) 
+                        VALUES (@AddressLine1, @AddressLine2, @AddressLine3, @GoogleMapsLink) 
+                        RETURNING id";
+
+                            addressId = await connection.ExecuteScalarAsync<int>(insertAddressQuery, new
+                            {
+                                exhibitionAddressDTO.AddressLine1,
+                                exhibitionAddressDTO.AddressLine2,
+                                exhibitionAddressDTO.AddressLine3,
+                                exhibitionAddressDTO.GoogleMapsLink
+                            });
+
+                            // Update exhibition with the new address ID
+                            const string updateExhibitionAddressQuery = "UPDATE exhibition SET addressid = @AddressId WHERE id = @Id";
+                            await connection.ExecuteAsync(updateExhibitionAddressQuery, new { Id = id, AddressId = addressId });
+                        }
+
+                        // Update exhibition details
+                        const string updateExhibitionQuery = @"
+                        UPDATE exhibition 
+                        SET venuename = @Venuename, 
+                            startdate = @Startdate, 
+                            enddate = @Enddate, 
+                            starttime = @Starttime, 
+                            endtime = @Endtime, 
+                            nooftables = @Nooftables, 
+                            description = @Description, 
+                            venueimages = @Venueimages, 
+                            bannerimage = @Bannerimage, 
+                            layoutimage = @Layoutimage 
+                        WHERE id = @Id";
+
+                        await connection.ExecuteAsync(updateExhibitionQuery, new
+                        {
+                            Id = id,
+                            exhibitionAddressDTO.Venuename,
+                            Startdate = Converter.ConvertStringToDateOnlyLegacy(exhibitionAddressDTO.Startdate),
+                            Enddate = Converter.ConvertStringToDateOnlyLegacy(exhibitionAddressDTO.Enddate),
+                            exhibitionAddressDTO.Starttime,
+                            exhibitionAddressDTO.Endtime,
+                            exhibitionAddressDTO.Nooftables,
+                            exhibitionAddressDTO.Description,
+                            Venueimages = exhibitionAddressDTO.Venueimages ?? new string[] { },  // Pass as an array
+                            exhibitionAddressDTO.Bannerimage,
+                            exhibitionAddressDTO.Layoutimage
+                        });
+
+
+                        await transaction.CommitAsync();
+                        return 1; // Success
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        Console.WriteLine($"Repository Error: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                        throw;
+                    }
+                }
+            }
+        }
+
+
+
+
+
         public async Task<int> DeleteExhibition(int id)
         {
             const string commandText = "DELETE FROM Exhibition WHERE Id = @Id;";
@@ -143,6 +254,8 @@ namespace exhibition_management_backend.Repositories.Exhibition
                 }
             }
         }
+
+
 
 
     }

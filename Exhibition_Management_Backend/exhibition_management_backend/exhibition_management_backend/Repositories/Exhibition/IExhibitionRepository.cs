@@ -12,5 +12,8 @@ namespace exhibition_management_backend.Repositories.Exhibition
         Task<int> CreateExhibitionAsync(ExhibitionAddressDTO exhibitionAddressDTO);
 
         Task<int> DeleteExhibition(int id);
+
+        Task<int> UpdateExhibition(int id, ExhibitionAddressDTO exhibitionAddressDTO);
     }
+
 }
